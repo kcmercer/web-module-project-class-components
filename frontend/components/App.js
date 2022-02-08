@@ -1,6 +1,7 @@
 import React from 'react'
 
 import Form from './Form';
+import TodoList from './TodoList';
 
 const initialState = [
   {
@@ -33,11 +34,30 @@ export default class App extends React.Component {
       todo: [...this.state.todo, newTask]
     })
   }
+
+  handleToggleTask = (selectedTask) => {
+    this.setState({
+      ...this.state,
+      todo: this.state.todo.map(task => {
+        if(task.id === selectedTask.id) {
+          return({
+            ...task,
+            completed: !task.completed
+          })
+        } else {
+          return task;
+        }
+      })
+    })
+  }
+
+
   render() {
     return (
       <>
         <div>
           <h2>Todo List: MVP</h2>
+          <TodoList handleToggleTask={this.handleToggleTask} handleAddTask={this.handleAddTask} todo={this.state.todo}/>
         </div>
         <div>
           <Form handleAddTask={this.handleAddTask} />
