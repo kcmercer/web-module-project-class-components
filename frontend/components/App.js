@@ -51,6 +51,15 @@ export default class App extends React.Component {
     })
   }
 
+  handleClearTasks = () => {
+    this.setState({
+      ...this.state,
+      todo: this.state.todo.filter(task => {
+        return !task.completed;
+      })
+    })
+  }
+
 
   render() {
     return (
@@ -61,7 +70,7 @@ export default class App extends React.Component {
         </div>
         <div>
           <Form handleAddTask={this.handleAddTask} />
-          <button>Clear Completed Tasks</button>
+          <button onClick={this.handleClearTasks}>Clear Completed Tasks</button>
         </div>
       </>
     )
