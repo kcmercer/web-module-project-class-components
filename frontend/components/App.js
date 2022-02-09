@@ -1,4 +1,5 @@
-import React from 'react'
+import React from 'react';
+import axios from 'axios';
 
 import Form from './Form';
 import TodoList from './TodoList';
@@ -13,41 +14,71 @@ const initialState = [
     task: 'Bake Cookies',
     id: 1528817084358,
     completed: false
-  }
-];
+  }];
+
+  // const URL = 'http://localhost:9000/api/todos/'
 
 export default class App extends React.Component {
   state = {
-    todo: initialState
+    todo: initialState,
+    todo2: []
   };
+
+  componentDidMount() {
+    axios.get('http://localhost:9000/api/todos')
+      .then(resp => {
+        console.log(resp.data.data)
+        this.setState({
+          ...this.state,
+          todo: resp.data.data
+        })
+        console.log(this.state)
+      })
+      .catch(error => {
+        console.log(error)
+      })
+  }
 
   handleAddTask = taskName => {
     const newTask = {
-      task: taskName,
+      name: taskName,
       id: Date.now(),
       completed: false
     }
-    console.log(this.state.todo)
+    // console.log(this.state.todo)
 
-    this.setState({
-      ...this.state,
-      todo: [...this.state.todo, newTask]
-    })
-  }
+    axios.post('http://localhost:9000/api/todos', newTask)
+      .then(resp => {
+        // console.log(resp.data.data)
+        this.setState({ todo: [...this.state.todo, resp.data.data]})
+        })
+      .catch(error => {
+        console.log(error)
+        })
+    }
 
   handleToggleTask = (selectedTask) => {
-    this.setState({
-      ...this.state,
-      todo: this.state.todo.map(task => {
-        if(task.id === selectedTask.id) {
-          return({
-            ...task,
-            completed: !task.completed
-          })
-        } else {
-          return task;
-        }
-      })
+    // this.setState({
+    //   ...this.state,
+    //   todo: this.state.todo.map(task => {
+    //     if(task.id === selectedTask.id) {
+    //       return({
+    //         ...task,
+    //         completed: !task.completed
+    //       })
+    //     } else {
+    //       return task;
+    //     }
+    //   })
+    // })
+    axios.patch(`http://localhost:9000/api/todos/${selectedTask}`, {
+      completed: !this.completed
+    })
+    .then(resp => {
+      console.log(resp.data)
+    })
+    .catch(error => {
+      console.log(error)
     })
   }
 
@@ -59,7 +90,6 @@ export default class App extends React.Component {
       })
     })
   }
-
 
   render() {
     return (
